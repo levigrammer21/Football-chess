@@ -1,5 +1,27 @@
 # Gridiron Chess · 1.0.0
 
+## Direct phone upload
+
+The repository root includes compiled browser files. Upload the contents of
+`Football-Chess-Root-Upload.zip` directly into your existing repository root,
+replacing matching files. The ZIP has no directories. No terminal or frontend
+build is required. Your existing GitHub Pages branch publishing serves:
+https://levigrammer21.github.io/Football-chess/
+
+This frontend still requires the authoritative Firebase backend. The checked
+GitHub run passed verification but failed deployment because the
+`FIREBASE_SERVICE_ACCOUNT` secret was unavailable. The `coach` endpoint returned
+404. Uploading static files does not deploy Cloud Functions or Firestore rules.
+Add the deployment credential through GitHub repository Settings > Secrets and
+variables > Actions; never upload a service-account key as a repository file.
+The Firebase deployment instructions below cover creating that credential.
+
+`app.html` is the source HTML entry; `index.html`, `game.js`, and `app.css` are
+compiled output. The agent or GitHub build regenerates the root output from the
+source. Keep `app.html` so future builds and CI work. All delivered files are flat.
+The existing GitHub workflow remains responsible for backend deployment.
+
+
 A phone-first PvP American football strategy game built with React, TypeScript, Firebase Authentication, Firestore, Cloud Functions, and Firebase Hosting.
 
 The repository contains the integrated application, authoritative simulation, security rules, automated verification, and a GitHub Actions deployment workflow. You do not need a computer, a terminal, local Node, or an emulator. GitHub runs the builds and tests for you.

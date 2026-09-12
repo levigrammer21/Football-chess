@@ -46,13 +46,11 @@ connect()
         </h1>
         <p>
           {e.message.includes("JSON")
-            ? "This build needs Firebase Hosting configuration."
+            ? "The Firebase configuration could not be loaded."
             : e.message}
         </p>
         <p>
-          The project includes a complete phone-operated deployment guide in
-          README.md. Once deployed to Firebase Hosting, configuration loads
-          automatically.
+          Check your connection and try again.
         </p>
         <button className="primary" onClick={() => location.reload()}>
           Retry connection
@@ -61,4 +59,4 @@ connect()
     ),
   );
 if ("serviceWorker" in navigator && import.meta.env.PROD)
-  navigator.serviceWorker.register("/sw.js").catch(() => {});
+  navigator.serviceWorker.register("./sw.js").catch(() => {});
