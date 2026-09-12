@@ -56,7 +56,7 @@ jobs:
           credentials_json: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
       - name: Deploy rules, functions, indexes and app
         env:
-          FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+          FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID || 'footballchess-b2d35' }}
         run: |
           test -n "$FIREBASE_PROJECT_ID" || { echo 'Add the FIREBASE_PROJECT_ID repository variable.'; exit 1; }
           npx firebase deploy --project "$FIREBASE_PROJECT_ID" --only firestore,functions,hosting --non-interactive

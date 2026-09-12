@@ -1,5 +1,6 @@
 import { connectRestEmulator } from "./sync";
 import { initializeApp, FirebaseOptions } from "firebase/app";
+import { firebaseConfig } from "./firebase-config";
 import {
   getAuth,
   connectAuthEmulator,
@@ -17,17 +18,14 @@ import {
   httpsCallable,
 } from "firebase/functions";
 export async function connect() {
-  let config: FirebaseOptions;
-  if (import.meta.env.VITE_FIREBASE_CONFIG)
-    config = JSON.parse(import.meta.env.VITE_FIREBASE_CONFIG);
-  else {
-    const r = await fetch("/__/firebase/init.json");
-    if (!r.ok)
-      throw new Error(
-        "Firebase configuration is not available. Deploy this project to Firebase Hosting using the included mobile setup guide.",
-      );
-    config = await r.json();
-  }
+  const config: FirebaseOptions = import.meta.env.VITE_FIREBASE_CONFIG
+    ? JSON.parse(import.meta.env.VITE_FIREBASE_CONFIG)
+    : firebaseConfig;
+  if (
+    import.meta.env.VITE_USE_EMULATORS === "true" &&
+    !config.projectId?.startsWith("demo-")
+  )
+    throw new Error("Emulator mode requires an explicit demo project configuration.");
   if (!config.apiKey || !config.projectId)
     throw new Error("Firebase project configuration is incomplete.");
   const app = initializeApp(config);

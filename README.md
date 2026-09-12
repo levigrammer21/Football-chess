@@ -20,9 +20,9 @@ Keep the default branch named `main`. `package-lock.json` is included so GitHub 
 
 In [Firebase Console](https://console.firebase.google.com/):
 
-1. Select the project you want this game to use. The included Firestore rules own the `users`, `games`, and `vaults` collections. Use a dedicated game project unless you have reviewed the effect on an existing app's rules and collections.
+1. Select **footballchess-b2d35**, the project configured in this build. The included Firestore rules own the `users`, `games`, and `vaults` collections. Use a dedicated game project unless you have reviewed the effect on an existing app's rules and collections.
 2. Enable the Blaze plan for Cloud Functions deployment. Billing belongs to your Firebase account; no payment credentials belong in the repository or chat.
-3. Project settings → General → Your apps → add a Web app. Register it. The deployed app loads the project's public web configuration from Firebase Hosting automatically; you do not need to paste API keys into source files.
+3. Your registered Web app configuration is included in root `firebase-config.ts`. Authentication, Firestore, and Cloud Functions use this project. Game analytics are stored in Firestore; the optional Google Analytics SDK is not enabled.
 4. Build → Authentication → Get started → Sign-in method → Email/Password → Enable. Leave email-link sign-in off unless you separately want it.
 5. Build → Firestore Database → Create database. Use the default database and production mode. Choose a region near your users; the functions in this release use `us-central1`.
 6. Open Hosting and enable it for the project. Your primary site will use `PROJECT_ID.web.app`.
@@ -44,7 +44,7 @@ Create a dedicated service account named `gridiron-deploy` in IAM & Admin → Se
 Create a JSON key for that deployment account. In GitHub → repository Settings → Secrets and variables → Actions:
 
 - Add repository secret `FIREBASE_SERVICE_ACCOUNT`: the complete service-account JSON.
-- Add repository variable `FIREBASE_PROJECT_ID`: the Firebase project ID, not its display name.
+- Deployment defaults to `footballchess-b2d35`. If you already set repository variable `FIREBASE_PROJECT_ID`, ensure its value is `footballchess-b2d35`. Changing projects also requires updating `firebase-config.ts`.
 
 Keep the JSON out of source files, commit history, and chat. The workflow uses Google's authentication action and temporary runner credentials.
 
