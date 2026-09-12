@@ -1,0 +1,93 @@
+{
+  "functions": [
+    {
+      "source": ".",
+      "codebase": "gridiron",
+      "runtime": "nodejs22",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "dist",
+        ".github",
+        "*.zip",
+        "*.test.ts",
+        "*.spec.ts",
+        "test-results",
+        "playwright-report",
+        "*-debug.log",
+        "*.tsx",
+        "README.md",
+        "TESTING.md",
+        "deploy.yml",
+        "firebase-config.json",
+        "screenshots",
+        "gha-creds-*.json",
+        "service-account*.json",
+        ".env*",
+        "integration-runner.mjs",
+        "mobile-check.log",
+        "verification.log",
+        "*.spec.ts",
+        "playwright.config.ts",
+        "deploy.yml"
+      ]
+    }
+  ],
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "public": "dist",
+    "ignore": ["firebase.json", "**/.*"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "/sw.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "same-origin"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "DENY"
+          }
+        ]
+      }
+    ]
+  },
+  "emulators": {
+    "auth": {
+      "port": 9099
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "functions": {
+      "port": 5001
+    },
+    "ui": {
+      "enabled": false
+    },
+    "singleProjectMode": true
+  }
+}

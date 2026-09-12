@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function signed() { return request.auth != null; }
+  function own(uid) { return signed() && request.auth.uid == uid; }
+  function member(gameId) { return signed() && request.auth.uid in get(/databases/$(database)/documents/games/$(gameId)).data.members; }
+  function completed(gameId) { return get(/databases/$(database)/documents/games/$(gameId)).data.status == 'complete'; }
+  match /users/{uid} {
+   allow read: if own(uid);
+   allow write: if false;
+   match /{collection}/{docId} { allow read: if own(uid); allow write: if false; }
+  }
+  match /games/{gameId} {
+   allow read: if signed() && request.auth.uid in resource.data.members;
+   allow write: if false;
+   match /snaps/{snapId} { allow read: if member(gameId); allow write: if false; }
+   match /film/{snapId} { allow read: if member(gameId) && completed(gameId); allow write: if false; }
+   match /reports/{uid} { allow read: if member(gameId) && completed(gameId); allow write: if false; }
+  }
+  match /vaults/{document=**} { allow read, write: if false; }
+  match /{document=**} { allow read, write: if false; }
+ }
+}

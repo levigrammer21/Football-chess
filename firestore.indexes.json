@@ -1,0 +1,18 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "games",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "deadline", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    { "collectionGroup": "snaps", "fieldPath": "frames", "indexes": [] },
+    { "collectionGroup": "film", "fieldPath": "frames", "indexes": [] },
+    { "collectionGroup": "vaults", "fieldPath": "plans", "indexes": [] },
+    { "collectionGroup": "vaults", "fieldPath": "stats", "indexes": [] }
+  ]
+}
