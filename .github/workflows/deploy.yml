@@ -1,1 +1,62 @@
-
+name: Test and deploy Gridiron Chess
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: gridiron-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Firebase and mobile browser verification
+        run: npx firebase emulators:exec --only auth,firestore,functions --project demo-gridiron 'node --import tsx --test rules.test.ts integration.test.ts && npx playwright test'
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: verification-report
+          path: |
+            playwright-report/
+            test-results/
+            *-debug.log
+  deploy:
+    needs: verify
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+      - name: Deploy rules, functions, indexes and app
+        env:
+          FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID || 'footballchess-b2d35' }}
+        run: |
+          test -n "$FIREBASE_PROJECT_ID" || { echo 'Add the FIREBASE_PROJECT_ID repository variable.'; exit 1; }
+          npx firebase deploy --project "$FIREBASE_PROJECT_ID" --only firestore,functions,hosting --non-interactive
